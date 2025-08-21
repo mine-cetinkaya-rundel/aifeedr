@@ -11,3 +11,5 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Imports:
     rstudioapi
+URL: https://github.com/mine-cetinkaya-rundel/aifeedr
+BugReports: https://github.com/mine-cetinkaya-rundel/aifeedr/issues
