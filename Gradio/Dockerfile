@@ -1,4 +1,4 @@
-FROM quay.io/jupyter/minimal-notebook:x86_64-ubuntu-24.04
+FROM python:3.12-slim-bookworm
 
 ARG NB_USER="jovyan"
 ARG NB_UID="1000"
