@@ -92,7 +92,7 @@ except Exception as e:
     GRADING_RULES = {}
     print(f"Error loading grading rules: {e}")
 
-def grade_assignment(user_assignment_title, student_answer):
+def grade_assignment(user_assignment_title, student_answer, session):
     assignment_title = user_assignment_title.lower()
 
     """Grade an assignment based on pre-defined rules"""
@@ -109,7 +109,8 @@ iface = gr.Interface(
     fn=grade_assignment,
     inputs=[
         gr.Textbox(label="Course Assignment"),
-        gr.Textbox(label="Student Answer", lines=5)
+        gr.Textbox(label="Student Answer", lines=5),
+        gr.Textbox(label="session")
     ],
     outputs=[
         gr.Textbox(label="Feedback")
