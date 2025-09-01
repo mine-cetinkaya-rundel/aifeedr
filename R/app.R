@@ -1,6 +1,41 @@
 # app.R
 library(stringi)
 
+#' Capture Selected Text
+#'
+#' An RStudio addin that captures the currently selected text in the editor
+#' or console and returns it as a character vector.
+#'
+#' @return A character vector containing the selected text. If no text is
+#'   selected, returns an empty character vector.
+#' @export
+capture_selection = function() {
+  if (!rstudioapi::isAvailable()) {
+    stop("This function requires RStudio")
+  }
+  
+  # Get the selected text using selectionGet()
+  selected_text = rstudioapi::selectionGet()
+  
+  # selectionGet() returns a list with 'value' containing the text
+  if (length(selected_text) > 0 && "value" %in% names(selected_text)) {
+    result = selected_text$value
+  } else {
+    result = character(0)
+  }
+  
+  # Return the result and also print it for immediate feedback
+  if (length(result) > 0) {
+    cat("Captured text:\n")
+    cat(paste(result, collapse = "\n"))
+    cat("\n")
+  } else {
+    cat("No text selected\n")
+  }
+  
+  invisible(result)
+}
+
 get_assignmnent_feedback <- function(homework_name, student_answer) {
   # Load required packages
   if (!require("httr")) install.packages("httr")
@@ -84,18 +119,18 @@ ui <- fluidPage(
   titlePanel("Assignment Feedback System"),
   
   # Homework name input
-  textInput("homework_name", "Enter Homework Name"),
+  textInput("homework_name", "Homework question", value = "homework1-q2"),
   
   # Student answer input
-  textAreaInput("student_answer", "Enter Student Answer", rows = 6, cols = 80),
-  
+  textAreaInput("student_answer", "Your answer", value = capture_selection(), rows = 6, cols = 80),
+
   # Submit button
-  actionButton("submit", "Submit for Feedback"),
+  actionButton("reset", "Copy selection to answer"),
+  actionButton("submit", "Get feedback"),
   
   # Feedback display area
   br(),
   h4("Feedback Result:"),
-  # textOutput("feedback_result")
   uiOutput("feedback_result")
 )
 
@@ -180,7 +215,6 @@ server <- function(input, output, session) {
   feedback_value <- reactiveVal("")
   
   observeEvent(input$submit, {
-    # grey out any feedback from previous submissions
     feedback_value("")
     homework_name <- input$homework_name
     student_answer <- input$student_answer
@@ -189,6 +223,13 @@ server <- function(input, output, session) {
     cleaned_result <- clean_result(raw_result)
     feedback_value(cleaned_result)
   })
+  
+  # Reset button: clear text input & reset from capture_selection()
+  observeEvent(input$reset, {
+    updateTextInput(session, "student_answer", value = capture_selection())
+    feedback_value("")  # also clear the display
+  })
+  
   
   # Render Markdown using renderText and HTML
   output$feedback_result <- renderUI({
