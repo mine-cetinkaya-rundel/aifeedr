@@ -31,18 +31,18 @@ capture_selection = function() {
   }
   
   # Return the result and also print it for immediate feedback
-  if (length(result) > 0) {
-    cat("Captured text:\n")
-    cat(paste(result, collapse = "\n"))
-    cat("\n")
-  } else {
-    cat("No text selected\n")
-  }
+#  if (length(result) > 0) {
+#    cat("Captured text:\n")
+#    cat(paste(result, collapse = "\n"))
+#    cat("\n")
+#  } else {
+#    cat("No text selected\n")
+#  }
   
   invisible(result)
 }
 
-get_assignmnent_feedback <- function(homework_name, student_answer) {
+get_assignmnent_feedback <- function(homework_name, student_answer, container_name) {
   # Load required packages
   if (!require("httr")) install.packages("httr")
   if (!require("jsonlite")) install.packages("jsonlite")
@@ -51,7 +51,7 @@ get_assignmnent_feedback <- function(homework_name, student_answer) {
   
   # Step 1: Prepare the POST request body
   body_data <- list(
-    data = c(homework_name, student_answer)
+    data = c(homework_name, student_answer, container_name)
   )
   
   # Step 2: Convert to JSON
@@ -171,13 +171,13 @@ server <- function(input, output, session) {
   
   observeEvent(input$submit, {
     # get the name of the container (host) we are running in
-    hidden_hostname_value <- Sys.info()[["nodename"]]
-    # print(hidden_hostname_value)
+    container_hostname <- Sys.info()[["nodename"]]
+    print(container_hostname)
     
     feedback_value("")
     homework_name <- input$homework_name
     student_answer <- input$student_answer
-    raw_result <- get_assignmnent_feedback(homework_name, student_answer)
+    raw_result <- get_assignmnent_feedback(homework_name, student_answer, container_hostname)
     
     cleaned_result <- clean_result(raw_result)
     feedback_value(cleaned_result)
