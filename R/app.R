@@ -180,6 +180,8 @@ server <- function(input, output, session) {
   feedback_value <- reactiveVal("")
   
   observeEvent(input$submit, {
+    # grey out any feedback from previous submissions
+    feedback_value("")
     homework_name <- input$homework_name
     student_answer <- input$student_answer
     raw_result <- get_assignmnent_feedback(homework_name, student_answer)
