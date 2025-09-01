@@ -13,13 +13,14 @@
 #
 # feedback <- get_assignmnent_feedback(
 #     homework_name = "homework1-q1",
-#     student_answer = "give me the question"
+#     student_answer = "give me the question",
+#     container_name = "container_hostname_as_a_session_id"
 #   )
 # print(feedback)
 #
 ############
 
-get_assignmnent_feedback <- function(homework_name, student_answer) {
+get_assignmnent_feedback <- function(homework_name, student_answer, container_name) {
   # Load required packages
   if (!require("httr")) install.packages("httr")
   if (!require("jsonlite")) install.packages("jsonlite")
@@ -28,7 +29,7 @@ get_assignmnent_feedback <- function(homework_name, student_answer) {
   
   # Step 1: Prepare the POST request body
   body_data <- list(
-    data = c(homework_name, student_answer)
+    data = c(homework_name, student_answer, container_name)
   )
   
   # Step 2: Convert to JSON
@@ -91,8 +92,3 @@ get_assignmnent_feedback <- function(homework_name, student_answer) {
   # Step 6: Return the final result
   return(get_result)
 }
-  
-
-
-
-  
