@@ -22,13 +22,13 @@ capture_selection = function() {
   }
   
   # Return the result and also print it for immediate feedback
-  if (length(result) > 0) {
-    cat("Captured text:\n")
-    cat(paste(result, collapse = "\n"))
-    cat("\n")
-  } else {
-    cat("No text selected\n")
-  }
+  #  if (length(result) > 0) {
+  #    cat("Captured text:\n")
+  #    cat(paste(result, collapse = "\n"))
+  #    cat("\n")
+  #  } else {
+  #    cat("No text selected\n")
+  #  }
   
   invisible(result)
 }
