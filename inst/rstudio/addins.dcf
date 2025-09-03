@@ -1,4 +1,4 @@
-Name: Capture Selection
-Description: Capture currently selected text in RStudio editor or console
-Binding: capture_selection
+Name: Get feedback
+Description: Get feedback on answers to homework question
+Binding: feedback_app
 Interactive: false
