@@ -1,6 +1,7 @@
 #' @import shiny
 #' @importFrom stringi stri_unescape_unicode
 #' @importFrom markdown markdownToHTML
+#' @export
 library(shiny)
 
 feedback_app <- function() {
