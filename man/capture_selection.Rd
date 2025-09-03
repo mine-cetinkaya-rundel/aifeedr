@@ -2,7 +2,7 @@
 % Please edit documentation in R/capture_selection.R
 \name{capture_selection}
 \alias{capture_selection}
-\title{Capture Selected Text}
+\title{Capture selected text}
 \usage{
 capture_selection()
 }

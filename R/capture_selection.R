@@ -1,4 +1,4 @@
-#' Capture Selected Text
+#' Capture selected text
 #'
 #' An RStudio addin that captures the currently selected text in the editor
 #' or console and returns it as a character vector.
