@@ -1,3 +1,6 @@
+#' @import shiny
+#' @importFrom stringi stri_unescape_unicode
+#' @importFrom markdown markdownToHTML
 library(shiny)
 
 feedback_app <- function() {
@@ -77,7 +80,7 @@ feedback_app <- function() {
       # fix the escaped unicode strings before rendering
       md_string <- stri_unescape_unicode(req(feedback_value()))
       # Convert markdown -> HTML and return as HTML
-      HTML(markdown::markdownToHTML(text = md_string, fragment.only = TRUE))
+      HTML(markdownToHTML(text = md_string, fragment.only = TRUE))
     })
   }
 
