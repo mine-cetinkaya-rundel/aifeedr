@@ -1,31 +1,32 @@
-#############
-# Function to call the Gradio backend LLM with the homework_id and student answer
-#
-# note that the feedback returned is in a funky format because Gradio's API 
-# only supports streaming results so we don't get nice clean JSON. 
-# Instead we get a line of text with the event status followed by 
-# the actual LLM with \n and " escaped something like this:
-#
-#   "event: complete\ndata: [\"The question is:\\n\\nThe `midwest` data frame...\n]\n\n"
-#
-# 
-# here is an example function call:
-#
-# feedback <- get_assignmnent_feedback(
-#     homework_name = "homework1-q1",
-#     student_answer = "give me the question",
-#     container_name = "container_hostname_as_a_session_id"
-#   )
-# print(feedback)
-#
-############
-
+#' Call the Gradio backend
+#' 
+#' Function to call the Gradio backend LLM with the 
+#' homework_name and student answer.
+#' 
+#' The feedback returned is in a funky format because 
+#' Gradio's API only supports streaming results so we 
+#' don't get nice clean JSON. Instead we get a line of 
+#' text with the event status followed by the actual 
+#' LLM with `\n` and `"` escaped something like the following:
+#' 
+#' ```r
+#' "event: complete\ndata: [\"The question is:\\n\\nThe `midwest` data frame...\n]\n\n"
+#' ```
+#' @param homework_name Homework name of format homeworkXqY 
+#' where X is the homework number and Y is the question number.
+#' @param student_answer Student answer.
+#' @param container_name Name of container.
+#' @examples
+#' feedback <- get_assignmnent_feedback(
+#'   homework_name = "homework1-q1",
+#'   student_answer = "give me the question",
+#'   container_name = "container_hostname_as_a_session_id"
+#' )
+#' feedback
+#' @importFrom httr POST GET status_code content_type accept content
+#' @importFrom jsonlite fromJSON toJSON
+#' @export
 get_assignmnent_feedback <- function(homework_name, student_answer, container_name) {
-  # Load required packages
-  if (!require("httr")) install.packages("httr")
-  if (!require("jsonlite")) install.packages("jsonlite")
-  library(httr)
-  library(jsonlite)
   
   # Step 1: Prepare the POST request body
   body_data <- list(
@@ -92,4 +93,3 @@ get_assignmnent_feedback <- function(homework_name, student_answer, container_na
   # Step 6: Return the final result
   return(get_result)
 }
-
