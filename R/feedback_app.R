@@ -7,7 +7,6 @@ feedback_app <- function() {
     titlePanel("Assignment Feedback System"),
 
     # Homework name input
-    #textInput("homework_name", "Homework question", value = "homework1-q2"),
     numericInput("homework_number", "Homework number", value = "1", min = 1, step = 1),
     numericInput("question_number", "Question number", value = "1", min = 1, step = 1),
     
