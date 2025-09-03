@@ -1,0 +1,5 @@
+#!/bin/bash
+#
+# build the container to run gradio apps
+#
+sudo docker build . -t gradio-feedback
