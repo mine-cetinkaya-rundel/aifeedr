@@ -2,8 +2,6 @@
 #' @importFrom stringi stri_unescape_unicode
 #' @importFrom markdown markdownToHTML
 #' @export
-library(shiny)
-
 feedback_app <- function() {
   # Define UI for the application
   ui <- fluidPage(
@@ -84,7 +82,6 @@ feedback_app <- function() {
       HTML(markdownToHTML(text = md_string, fragment.only = TRUE))
     })
   }
-
 
   # Start the Shiny app
   shinyApp(ui = ui, server = server)
