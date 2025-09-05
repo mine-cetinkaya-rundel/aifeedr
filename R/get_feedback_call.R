@@ -17,7 +17,7 @@
 #' @param student_answer Student answer.
 #' @param container_name Name of container.
 #' @examples
-#' feedback <- get_assignmnent_feedback(
+#' feedback <- get_feedback_call(
 #'   homework_name = "homework1-q1",
 #'   student_answer = "give me the question",
 #'   container_name = "container_hostname_as_a_session_id"
@@ -26,7 +26,7 @@
 #' @importFrom httr POST GET status_code content_type accept content
 #' @importFrom jsonlite fromJSON toJSON
 #' @export
-get_assignmnent_feedback <- function(homework_name, student_answer, container_name) {
+get_feedback_call <- function(homework_name, student_answer, container_name) {
   
   # Step 1: Prepare the POST request body
   body_data <- list(
