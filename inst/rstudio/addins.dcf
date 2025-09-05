@@ -1,4 +1,5 @@
 Name: Get feedback
 Description: Get feedback on answers to homework question
-Binding: feedback_app
+Binding: get_feedback
 Interactive: false
+Shortcut: Ctrl+Shift+F
