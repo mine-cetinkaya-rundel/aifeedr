@@ -22,7 +22,12 @@ ui <- fluidPage(
     "button to get AI-generated feedback based on a rubric 
       designed by a human -- your course instructor.
       Please be patient, feedback generation can take 
-      a few seconds.", 
+      a few seconds. Once you read the feedback, you can 
+      go back to your Quarto document to improve your 
+      answer based on the feedback. You will then need
+      to click the red X on the top left corner of the Viewer
+      pane to stop the feedback app from running
+      before you can re-render your Quarto document.", 
     style = "font-size:16px"
   ),
   
