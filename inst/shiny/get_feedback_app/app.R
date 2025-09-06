@@ -3,6 +3,9 @@ library(shiny)
 library(stringi)
 library(markdown)
 
+# force Shiny apps to open in the Viewer pane
+options(shiny.launch.browser = rstudioapi::viewer)
+
 # Define UI for the application
 ui <- fluidPage(
   # Application title
