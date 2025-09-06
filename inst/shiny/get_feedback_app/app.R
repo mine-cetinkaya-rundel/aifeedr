@@ -2,12 +2,20 @@ library(aifeedr)
 library(shiny)
 library(stringi)
 library(markdown)
+library(shinycssloaders)
 
 # force Shiny apps to open in the Viewer pane
 options(shiny.launch.browser = rstudioapi::viewer)
 
 # Define UI for the application
 ui <- fluidPage(
+  
+  tags$style(HTML("
+    #student_answer {
+      font-family: monospace;
+    }
+  ")),
+  
   # Application title
   titlePanel(HTML("Get feedback from AI &#129302")),
   
@@ -35,15 +43,14 @@ ui <- fluidPage(
   
   p(
     strong("Warning:"), 
-    "AI can make mistakes, so read the feedback
-      carefully and critically."
+    "AI can make mistakes, so read the feedback carefully and critically."
   ),
   
   br(),
   
   # Homework name input
-  radioButtons("homework_number", "Homework number", choices = 1:6, selected = 1, inline = TRUE),
-  numericInput("question_number", "Question number", value = "1", min = 1, step = 1),
+  radioButtons("homework_number", "Homework number:", choices = 1:6, selected = 1, inline = TRUE),
+  numericInput("question_number", "Question number:", value = "1", min = 1, step = 1),
   
   # Student answer input, not editable
   #textAreaInput("student_answer", "Your answer", value = Sys.getenv("captured_text_for_feedback"), rows = 6, cols = 80),
@@ -54,7 +61,7 @@ ui <- fluidPage(
       id = "student_answer",
       class = "form-control",
       readonly = "readonly",
-      rows = 6, cols = 80,
+      rows = 10, cols = 80,
       Sys.getenv("captured_text_for_feedback")
     )
   ),
@@ -65,8 +72,8 @@ ui <- fluidPage(
   # Feedback display area
   br(),
   br(),
-  h4("AI-generated feedback:"),
-  uiOutput("feedback_result")
+  withSpinner(uiOutput("feedback_result"), type = 4, color = "#3b3b3b"),
+  br()
 )
 
 # Define server logic
@@ -97,28 +104,29 @@ server <- function(input, output, session) {
     return(very_clean)
   }
   
-  feedback_value <- reactiveVal("")
-  
-  observeEvent(input$submit, {
+  feedback_value <- reactive({
+    
     # get the name of the container (host) we are running in
     container_hostname <- Sys.info()[["nodename"]]
-    #print(container_hostname)
-    
-    feedback_value("")
+
     homework_name <- paste0("homework", input$homework_number, "-q", input$question_number)
     student_answer <- input$student_answer
     raw_result <- get_feedback_call(homework_name, student_answer, container_hostname)
     
-    cleaned_result <- clean_result(raw_result)
-    feedback_value(cleaned_result)
-  })
+    clean_result(raw_result)
 
+  }) |>
+    bindEvent(input$submit)
+  
   # Render Markdown using renderText and HTML
   output$feedback_result <- renderUI({
     # fix the escaped unicode strings before rendering
     md_string <- stringi::stri_unescape_unicode(req(feedback_value()))
     # Convert markdown -> HTML and return as HTML
-    HTML(markdown::markdownToHTML(text = md_string, fragment.only = TRUE))
+    list(
+      h4("AI-generated feedback:"),
+      HTML(markdown::markdownToHTML(text = md_string, fragment.only = TRUE))
+    )
   })
   
   session$onSessionEnded(stopApp)

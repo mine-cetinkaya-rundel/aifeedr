@@ -16,6 +16,7 @@ Imports:
     markdown,
     rstudioapi,
     shiny,
+    shinycssloaders,
     stringi
 URL: https://github.com/mine-cetinkaya-rundel/aifeedr, https://mine-cetinkaya-rundel.github.io/aifeedr/
 BugReports: https://github.com/mine-cetinkaya-rundel/aifeedr/issues

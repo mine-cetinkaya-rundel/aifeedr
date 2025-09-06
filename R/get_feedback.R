@@ -13,6 +13,7 @@
 #' @importFrom rstudioapi isAvailable selectionGet
 #' @importFrom markdown markdownToHTML
 #' @importFrom stringi stri_unescape_unicode
+#' @importFrom shinycssloaders withSpinner
 #' @export
 get_feedback = function() {
   if (!rstudioapi::isAvailable()) {
