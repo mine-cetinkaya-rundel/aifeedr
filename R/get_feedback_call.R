@@ -37,7 +37,7 @@ get_feedback_call <- function(homework_name, student_answer, container_name) {
   json_body <- toJSON(body_data, auto_unbox = TRUE)
   
   # Step 3: Send POST request with exception handling
-  post_url <- "https://chatbot-az-00.oit.duke.edu:5443/gradio_api/call/predict/"  # Replace with actual URL
+  post_url <- "https://chatbot-az-00.oit.duke.edu:5443/gradio_api/call/predict/"  # Deploy
   post_result <- tryCatch({
     # Attempt the POST request
     response <- POST(
@@ -71,7 +71,7 @@ get_feedback_call <- function(homework_name, student_answer, container_name) {
   event_id <- post_result$event_id
   
   # Step 5: Send GET request with exception handling
-  get_url <- paste0("https://chatbot-az-00.oit.duke.edu:5443/gradio_api/call/predict/", event_id)
+  get_url <- paste0("https://chatbot-az-00.oit.duke.edu:5443/gradio_api/call/predict/", event_id) # Deploy
   get_result <- tryCatch({
     # Attempt the GET request
     response <- GET(url = get_url)
