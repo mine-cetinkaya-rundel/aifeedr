@@ -85,7 +85,7 @@ STUDENT ANSWER:
             bot_response = response.choices[0].message.content
             # history.append({"role": "assistant", "content": bot_response})
         else:
-            print(f"Unexpected response: {data}")
+            #print(f"Unexpected response: {data}")
             #return "", history, [{"role": "assistant", "content": "No response received."}]
             bot_response = "No response received."
 
@@ -93,7 +93,7 @@ STUDENT ANSWER:
         return bot_response
 
     except Exception as e:
-        print(f"Error processing input: {e}")
+        #print(f"Error processing input: {e}")
         return history ## , source_documents
 
 
@@ -107,12 +107,66 @@ except Exception as e:
     GRADING_RULES = {}
     print(f"Error loading grading rules: {e}")
 
+############## logging user interactions start ################
+import psycopg2
+
+# settings for postgres logging
+PGUSER = os.getenv('PGUSER')
+PGHOST = os.getenv('PGHOST')
+PGHPORT = os.getenv('PGHPORT')
+PGPASSWORD = os.getenv('PGPASSWORD')
+PGDATABASE= os.getenv('PGDATABASE')
+
+def log_one_interaction( interaction ):
+  try:
+    connection = psycopg2.connect(user=PGUSER,
+                                  password=PGPASSWORD,
+                                  host=PGHOST,
+                                  port=PGHPORT,
+                                  database=PGDATABASE)
+    cursor = connection.cursor()
+    the_values = ( interaction['session_id'], \
+                   interaction['assignment'], \
+                   interaction['action'], \
+                   interaction['detail'])
+
+    my_SQL_statement = "INSERT INTO activity_log (session_id,assignment,action,detail) VALUES (%s,%s,%s,%s)"
+    # print(my_SQL_statement)
+    # print(the_values)
+    cursor.execute(my_SQL_statement, the_values )
+    connection.commit()
+    count = cursor.rowcount
+    # print(count, "Record inserted successfully into activity_log table")
+
+  except (Exception, psycopg2.Error) as error:
+    print("Failed to insert record into activity_log table", error)
+
+  finally:
+    # closing database connection.
+    if connection:
+        cursor.close()
+        connection.close()
+        # print("PostgreSQL connection is closed")
+
+
+def auditlog(session_id, assignment, action, detail):
+    an_event = {
+        'session_id': session_id,
+        'assignment': assignment,
+        'action': action,
+        'detail': detail }
+    log_one_interaction( an_event )
+
+############## logging user interactions end ################
+
 def grade_assignment(user_assignment_title, student_answer, session):
     assignment_title = user_assignment_title.lower()
 
     """Grade an assignment based on pre-defined rules"""
     if assignment_title not in GRADING_RULES:
-        return "Error", f"Assignment '{user_assignment_title}' not found"
+        error_message = f"Assignment '{user_assignment_title}' not found"
+        auditlog(session, assignment_title, 'assignment_lookup_error', error_message ) 
+        return "Error", error_message
     else:
         fake_history = []
         assignment = GRADING_RULES[assignment_title]
@@ -120,7 +174,9 @@ def grade_assignment(user_assignment_title, student_answer, session):
             fixed_student_answer = "empty answer"
         else:
             fixed_student_answer = student_answer + "\n               "
+        auditlog(session, assignment_title, 'answer', fixed_student_answer)
         feedback = generate_response(assignment, fixed_student_answer, fake_history ) 
+        auditlog(session, assignment_title, 'feedback', feedback)
         return feedback
 
 # Create Gradio interface
@@ -140,5 +196,5 @@ iface = gr.Interface(
 
 # Launch the app with API endpoint
 if __name__ == "__main__":
-    iface.launch(server_name="0.0.0.0", server_port=7860, share=False)
+    iface.launch(server_name="0.0.0.0", server_port=7860, share=False, max_threads=400)
 
