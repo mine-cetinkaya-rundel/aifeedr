@@ -3,6 +3,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 from itables import init_notebook_mode
 init_notebook_mode(all_interactive=True)
+import tempfile
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -18,6 +19,25 @@ PGDATABASE= os.getenv('PGDATABASE')
 engine = create_engine(
     f"postgresql+psycopg2://{PGUSER}:{PGPASSWORD}@{PGHOST}:{PGHPORT}/{PGDATABASE}"
 )
+
+# --------------------------
+# NEW: Fetch database stats
+# --------------------------
+def fetch_db_stats():
+    """Return total rows and unique sessions count."""
+    try:
+        query = """
+            SELECT COUNT(*) AS total_rows,
+                   COUNT(DISTINCT session_id) AS unique_sessions
+            FROM activity_log;
+        """
+        df = pd.read_sql(query, engine)
+        total_rows = int(df["total_rows"].iloc[0])
+        unique_sessions = int(df["unique_sessions"].iloc[0])
+        return f"📊 **Database Stats:** {total_rows:,} rows · {unique_sessions:,} unique sessions"
+    except Exception as e:
+        return f"⚠️ Error fetching stats: {str(e)}"
+
 
 def get_session_ids():
     """Fetch distinct session_ids from database."""
@@ -56,7 +76,12 @@ def fetch_activity_log(session_id="ALL"):
                 ORDER BY ts desc;
             """
             df = pd.read_sql(query, engine, params={"session_id": session_id})
-        # Keep full details, truncate for display
+
+        # keep the whole dataframe around in case we want to download the data
+        global full_log_df 
+        full_log_df = df.copy() #keep this around for downloads
+        
+        # keep full details, truncate for default display
         global full_details
         full_details = df["detail"].to_list()
         display_df = df.copy()
@@ -69,6 +94,20 @@ def show_full_detail(evt: gr.SelectData):
     """Triggered when a row is clicked in the dataframe"""
     row_index = evt.index[0]
     return full_details[row_index] if 0 <= row_index < len(full_details) else "[No detail]"
+
+## download the activity log
+def download_activity_log(session_id="ALL"):
+    """Return a TSV file with the activity log """
+
+    # Create a temporary directory
+    tmpdir = tempfile.mkdtemp()
+    filepath = os.path.join(tmpdir, "activity_log.tsv")
+
+    # Save file as TSV with the correct name
+    full_log_df.to_csv(filepath, sep="\t", index=False)
+    return filepath
+   
+##
 
 # plotting ###
 from bokeh.plotting import figure
@@ -148,7 +187,10 @@ def fetch_time_series(session_id="ALL"):
 
 # --- Gradio UI ---
 with gr.Blocks() as demo:
-    gr.Markdown("## Activity Log")
+    with gr.Row():
+        gr.Markdown("## Activity Log")
+        stats_display = gr.Markdown(fetch_db_stats())
+
 
     with gr.Row():
         session_dropdown = gr.Dropdown(
@@ -173,6 +215,10 @@ with gr.Blocks() as demo:
     gr.Markdown("\n\n---\n### Activity time series")
     plot_output = gr.Plot()
 
+    with gr.Row():
+        download_btn = gr.Button("📥 Download Activity Log")
+        download_file = gr.File(label="Download Log", type="filepath")
+
     # update table + plot together when dropdown changes
     session_dropdown.change(
         fn=lambda sid: (fetch_activity_log(sid), fetch_time_series(sid), detail_placeholder),
@@ -180,11 +226,16 @@ with gr.Blocks() as demo:
         outputs=[table, plot_output, detail_view]
     )
 
+    # Connect download button to our new function
+    download_btn.click(fn=download_activity_log,
+                       inputs=session_dropdown,
+                       outputs=download_file)
+
     # Auto-load both table and plot on page open
     demo.load(
-        fn=lambda sid: (fetch_activity_log(sid), fetch_time_series(sid), detail_placeholder),
+        fn=lambda sid: (fetch_activity_log(sid), fetch_time_series(sid), detail_placeholder, fetch_db_stats()),
         inputs=[session_dropdown],
-        outputs=[table, plot_output, detail_view]
+        outputs=[table, plot_output, detail_view, stats_display]
     )
 
 
