@@ -9,3 +9,4 @@ CLAUDE.md
 ^pkgdown$
 ^\.github$
 ^README\.Rmd$
+hw-1.qmd

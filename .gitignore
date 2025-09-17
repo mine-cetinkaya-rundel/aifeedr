@@ -5,3 +5,7 @@
 .DS_Store
 .quarto
 docs
+
+/.quarto/
+**/*.quarto_ipynb
+hw-1.qmd
