@@ -35,7 +35,7 @@ Rules:
 
 Output format:
 - Start with “**Feedback:**”
-- The summarize the feedback
+- Then summarize the feedback
 - Then format the feedback as bullet points. 
 - Each bullet point should first first display a green checkmark when the response meets the RUBRIC or a red x when the response fails to meet the RUBRIC
 - Each Bullet point should then state the rubric item text from RUBRIC and provide one sentence explaining whether the STUDENT RESPONSE meets the RUBRIC item.
