@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# aifeedr
+# aifeedr <a href="https://mine-cetinkaya-rundel.github.io/aifeedr/"><img src="man/figures/logo.png" align="right" height="132" alt="aifeedr website" /></a>
 
 <!-- badges: start -->
 
