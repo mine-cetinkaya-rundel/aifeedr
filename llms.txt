@@ -1,0 +1,30 @@
+# aifeedr
+
+The goal of aifeedr is to functions to interact with an LLM to generate
+feedback for data science assignment questions based on a rubric.
+
+## Installation
+
+You can install the development version of aifeedr from
+[GitHub](https://github.com/) with:
+
+``` r
+# install.packages("pak")
+pak::pak("mine-cetinkaya-rundel/aifeedr")
+```
+
+## Usage
+
+Users primarily use this package via the RStudio addin `Get feedback`.
+
+# Package index
+
+## All functions
+
+- [`get_feedback()`](https://mine-cetinkaya-rundel.github.io/aifeedr/reference/get_feedback.md)
+  : Capture selected text and launch Shiny app for feedback
+- [`get_feedback_call()`](https://mine-cetinkaya-rundel.github.io/aifeedr/reference/get_feedback_call.md)
+  : Call the Gradio backend
+- [`get_hostname()`](https://mine-cetinkaya-rundel.github.io/aifeedr/reference/get_hostname.md)
+  : Get the container hostname we are running inside
+
