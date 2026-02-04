@@ -49,7 +49,7 @@ ui <- fluidPage(
   br(),
   
   # Homework name input
-  radioButtons("homework_number", "Homework number:", choices = 1:6, selected = 1, inline = TRUE),
+  radioButtons("homework_number", "Homework number:", choices = 1:7, selected = 1, inline = TRUE),
   numericInput("question_number", "Question number:", value = "1", min = 1, step = 1),
   
   # Student answer input, not editable
